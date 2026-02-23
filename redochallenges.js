@@ -515,20 +515,16 @@ mumble('!A 2') //=> '!-AA-   -2222'
 
 
 const mumble=(str)=>{
-  let newStr='';
+  let newStr=''
 
-  for(let i=0; i<str.length; i++){ 
-    newStr+=(str[i].repeat(i+1));
+  for (let i=0; i<str.length; i++){
+    newStr+=((str[i].repeat(i+1))+'-');    
+  }
 
-    if (i < str.length - 1) {
-      newStr += '-';
-    };
-
-  };
-
-  return newStr
+  return newStr.slice(0,-1)
 }
 
+console.log('mumble');
 console.log(mumble('X')) //=> 'X'
 console.log(mumble('abc'))//=> 'a-bb-ccc'
 console.log(mumble('121')) //=> '1-22-111'
@@ -559,15 +555,15 @@ fromPairs([ ['name', 'Sam"], ['age', 24], ['name', 'Sally'] ])
 -----------------------------------------------------------------------------*/
 // Your solution for 14-fromPairs here:
 
-const fromPairs = (arr) => {
-  const obj = arr.reduce((acc, [key, value]) => {
-    acc[key] = value;
-    return acc;
-  }, {});
+// const fromPairs = (arr) => {
+//   const obj = arr.reduce((acc, [key, value]) => {
+//     acc[key] = value;
+//     return acc;
+//   }, {});
 
-  return obj
-  // console.log(obj);
-};
+//   return obj
+//   // console.log(obj);
+// };
 
 // function fromPairs(arr) {
 //   // returning an object
@@ -584,9 +580,13 @@ const fromPairs = (arr) => {
 //   return result
 // }
 
+const fromPairs=(array)=>{
+  return Object.fromEntries(array);
+}
 
-fromPairs([ ['a', 1], ['b', 2], ['c', 3] ]);
-fromPairs([ ['name', 'Sam'], ['age', 24], ['name', 'Sally'] ]) 
+console.log('fromPairs')
+console.log(fromPairs([ ['a', 1], ['b', 2], ['c', 3] ]));
+console.log(fromPairs([ ['name', 'Sam'], ['age', 24], ['name', 'Sally'] ]) )
 
 
 /*-----------------------------------------------------------------------------
@@ -616,18 +616,25 @@ mergeObjects({a: 1, b: 2, c: 3}, {d: 4}, {b: 22, d: 44})
 -----------------------------------------------------------------------------*/
 // Your solution for 15-mergeObjects here:
 
-const mergeObjects=(mainObj, ...objects)=>{
+// const mergeObjects=(mainObj, ...objects)=>{
 
-  return Object.fromEntries([
-    ...Object.entries(mainObj),
-    ...objects.flatMap(obj => Object.entries(obj))
-  ]);
+//   return Object.fromEntries([
+//     ...Object.entries(mainObj),
+//     ...objects.flatMap(obj => Object.entries(obj))
+//   ]);
 
-    // Object.assign(mainObj, ...objects);
-    // return mainObj;
+//     // Object.assign(mainObj, ...objects);
+//     // return mainObj;
   
-};
+// };
 
+const mergeObjects=(...objects)=>{
+  const merged= Object.assign(...objects, {})
+
+  return merged
+}
+
+console.log('merge')
 console.log(mergeObjects({}, {a: 1}))
 //=> {a: 1} 
 
@@ -678,16 +685,16 @@ findHighestPriced([
 -----------------------------------------------------------------------------*/
 // Your solution for 16-findHighestPriced here:
 
-const findHighestPriced=(arr)=>{
-  let highest=null
+// const findHighestPriced=(arr)=>{
+//   let highest=null
 
-    for (const item of arr) {
-      if (highest === null || item.price > highest.price) {
-      highest = item;
-      }
-    };
-  return highest;
-};
+//     for (const item of arr) {
+//       if (highest === null || item.price > highest.price) {
+//       highest = item;
+//       }
+//     };
+//   return highest;
+// };
 
 // function findHighestPriced(items) {
 //   return items.reduce((highest, current) => {// same as (acc, current )//will acc the highest
@@ -707,6 +714,16 @@ const findHighestPriced=(arr)=>{
 //     }
 //     return items[highestIdx]
 // }
+
+const findHighestPriced=(items)=>{
+
+  const highestPriced=items.reduce((previous, current)=>
+    current.price>previous.price? current:previous
+  );
+  return highestPriced
+}
+
+console.log('highest');
 
 console.log(findHighestPriced([
   { sku: 'a1', price: 25 },
@@ -822,25 +839,18 @@ reduceArray( ['Yes', 'No', 'Yes', 'Maybe'], function(acc, v) {
 -----------------------------------------------------------------------------*/
 // Your solution for 18-reduceArray here:
 
-const reduceArray=(array, callback, initialValue)=>{
+const reduceArray=(array, callbackF, acc)=>{
 
-  let value=initialValue
-  array.forEach((item, index)=>{
-    value=callback(value, item, index);
-  });
-  
-  return value;
-}
+  let result=acc
 
-// const reduceArray = (array, callback, accumulator)=>{
+  for(const [index, item] of array.entries()){
+   result=callbackF(result, item, index)
+  }
 
-//   array.forEach((item, index)=>{
-//     accumulator=callback(accumulator,item,index);
-//   })
-//   return accumulator;
-// }
+  return result
+};
 
-
+console.log('reduced')
 console.log(reduceArray( [1, 2, 3], function(acc, n) {
   return acc + n
 }, 0));
@@ -878,10 +888,10 @@ flatten( [1, [2, [3, [4]]], 1, 'a', ['b', 'c']] );
 -----------------------------------------------------------------------------*/
 // Your solution for 19-flatten here:
 
-const flatten=(arr)=>{
-  const newArray=arr.flat(Infinity);
-  return newArray;
-}
+// const flatten=(arr)=>{
+//   const newArray=arr.flat(Infinity);
+//   return newArray;
+// }
 
 //second 
 
@@ -903,6 +913,38 @@ const flatten=(arr)=>{
 //     return flattened
 // }
 
+const flatten =(array)=>{
+
+  let newArray=[]
+
+  for(const item of array){
+    if (Array.isArray(item)){
+      newArray=newArray.concat(flatten(item))
+    } else {
+      newArray.push(item)
+    }
+  }
+
+  return newArray
+}
+
+
+const flatten = (array) => {
+  const newArray = []
+
+  for (const item of array) {
+    if (Array.isArray(item)) {
+      newArray.push(...flatten(item))
+    } else {
+      newArray.push(item)
+    }
+  }
+
+  return newArray
+}
+
+
+console.log('flatten')
 console.log(flatten( [1, [2, 3]] ));
 console.log(flatten( [1, [2, [3, [4]]], 1, 'a', ['b', 'c']] ));
 
